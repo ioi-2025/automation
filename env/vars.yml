@@ -6,9 +6,10 @@ letsencrypt_service_admin_email: info@ioinformatics.org # TODO
 
 ### CMS ###
 
-# cms_repo: https://github.com/ioi/cms.git
-# cms_version: master
+cms_repo: https://github.com/cms-dev/cms
+cms_version: main
 
+ansible_user: ansible
 cms_db: cmsdb
 cms_db_user: cmsuser
 cms_db_pass: pass # TODO: random password
