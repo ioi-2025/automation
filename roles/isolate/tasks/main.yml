@@ -1,64 +1,11 @@
-- name: Install Isolate prerequisite packages
+- name: Install Isolate dependencies
   become: yes
   package:
     name:
-      - build-essential # Required to build some CMS Python dependencies
-      - cgroup-lite
-      - libcap-dev
-      - pkg-config # Required to compile isolate
-      - libsystemd-dev # Required to compile isolate
-      - asciidoc # Required to compile isolate
+       - pkg-config
+       - libcap-dev
+       - libsystemd-dev
   tags: packages
-
-- name: Ensure Isolate repo directory exists
-  become: yes
-  file:
-    path: /opt/isolate
-    owner: "{{ ansible_user }}"
-    mode: "0755"
-    state: directory
-
-- name: Check out the Isolate repository
-  git:
-    repo: "{{ isolate_repo }}"
-    version: "{{ isolate_version }}"
-    dest: /opt/isolate
-    accept_hostkey: yes
-    depth: 1
-
-- name: Build Isolate
-  become: yes
-  make:
-    chdir: /opt/isolate
-    target: isolate
-
-- name: Ensure Isolate parent directories exist
-  become: yes
-  file:
-    path: "{{ item }}"
-    owner: root
-    group: root
-    mode: "0755"
-    state: directory
-  with_items:
-    - /var/local/lib
-    - /usr/local/bin
-    - /usr/local/etc
-
-- name: Ensure Isolate box root directory exists
-  become: yes
-  file:
-    path: /var/local/lib/isolate
-    owner: root
-    group: root
-    mode: "0755"
-    state: directory
-
-- name: Install Isolate
-  make:
-    chdir: /opt/isolate
-    target: install
-  become: yes
 
 - name: Copy Isolate config
   become: yes
@@ -72,28 +19,3 @@
 
 - name: Apply Isolate optimizations
   import_tasks: apply_optimizations.yml
-
-- name: Copy Isolate systemd service files
-  become: yes
-  copy:
-    src: /opt/isolate/systemd/
-    dest: /etc/systemd/system/
-    remote_src: yes
-    owner: root
-    group: root
-    mode: "0644"
-  tags: systemd
-
-- name: Reload systemd to recognize new services
-  become: yes
-  systemd:
-    daemon-reload: yes
-  tags: systemd
-
-- name: Start Isolate service
-  become: yes
-  systemd:
-    name: isolate.service
-    state: started
-    enabled: yes
-  tags: systemd
