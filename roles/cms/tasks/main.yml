@@ -15,6 +15,8 @@
     - libffi-dev
     - build-essential # Required to build some CMS Python dependencies
     - libcups2-dev # Required by pycups CMS Python dependency
+    - pkg-config
+    - libsystemd-dev
   tags: packages
   notify: Restart CMS
 
@@ -171,6 +173,25 @@
   changed_when: no
   check_mode: no # Run even when Ansible is run in check mode
   register: slurp_cms_installed_git_commit_result
+
+- name: Run prerequisites.py
+  become: yes
+  ansible.builtin.shell: python3 prerequisites.py -y --no-conf install
+  args:
+    chdir: /opt/cms
+  register: prereq_result
+
+- name: Show prerequisites.py output (stdout)
+  ansible.builtin.debug:
+    var: prereq_result.stdout
+
+- name: Show prerequisites.py errors (stderr)
+  ansible.builtin.debug:
+    var: prereq_result.stderr
+
+- name: Print cmsuser group memberships
+  ansible.builtin.debug:
+    var: user_groups.stdout
 
 - name: Install CMS Python requirements
   become: yes
