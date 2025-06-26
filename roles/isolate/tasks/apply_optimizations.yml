@@ -109,7 +109,7 @@
 
 - name: Run isolate-check-environment tool
   become: yes
-  shell: /opt/isolate/isolate-check-environment
+  shell: /opt/cms/isolate/isolate-check-environment
   ignore_errors: yes
   changed_when: no # This task doesn't change any state or config
   check_mode: no # Run even when Ansible is run in check mode
