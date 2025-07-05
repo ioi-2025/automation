@@ -10,6 +10,8 @@
   tags: migrate
 
 - name: Migrate CMS database
+  become: yes
+  become_user: cmsuser
   command: /home/cmsuser/cms/bin/cmsInitDB
   when: cms_db_tables_query_result.rowcount == 0
   notify: Restart CMS

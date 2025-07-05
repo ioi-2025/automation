@@ -150,6 +150,7 @@
     accept_hostkey: yes
     depth: 1
   register: cms_git_checkout_result
+  ignore_errors: yes
 
 - name: Ensure /home/cmsuser/src exists and is owned by cmsuser
   become: yes
@@ -166,7 +167,7 @@
   become_user: cmsuser
   args:
     chdir: /home/cmsuser/src/
-  shell: python3 install.py --dir=/home/cmsuser/cms cms
+  shell: python3 install.py --skip-isolate --dir=/home/cmsuser/cms cms
   register: prereq_result
 
 - name: Show install.py output (stdout)
